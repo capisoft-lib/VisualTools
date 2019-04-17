@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage 
+    xmlns="http://xamarin.com/schemas/2014/forms" 
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+    xmlns:local="clr-namespace:UIDragNDrop.Views"
+    x:Class="UIDragNDrop.Pages.MindMapPage">
+    <ContentPage.Content>
+        <RelativeLayout>
+            <local:DrawableAbsoluteLayout x:Name="dndLayout"
+                RelativeLayout.YConstraint="{ConstraintExpression Type=Constant, Constant=70}"
+                RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Factor=0.8, Property=Width}"
+                RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent, Factor=1, Property=Height, Constant=-70}" >
+                <AbsoluteLayout.GestureRecognizers>
+                    <TapGestureRecognizer NumberOfTapsRequired="2" Tapped="Handle_Tapped_CreateNew" />
+                </AbsoluteLayout.GestureRecognizers>
+            </local:DrawableAbsoluteLayout>
+            <StackLayout Orientation="Horizontal" BackgroundColor="Gray"
+                RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Factor=1, Property=Width}" 
+                RelativeLayout.HeightConstraint="{ConstraintExpression Type=Constant, Constant=70}" >
+                <Button Text="Clear" Clicked="Handle_Clicked_Clear" />
+                <Button Text="New Root" Clicked="Handle_Clicked_Add" />
+            </StackLayout>
+            <StackLayout BackgroundColor="Silver"
+                RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Factor=0.8, Property=Width}"
+                RelativeLayout.YConstraint="{ConstraintExpression Type=Constant, Constant=70}"
+                RelativeLayout.WidthConstraint="{ConstraintExpression Type=RelativeToParent, Factor=0.2, Property=Width}"
+                RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToParent, Factor=1, Property=Height, Constant=-70}">
+                <Entry Text="{Binding CurrentMindMapEntity.Title, Mode=TwoWay}"  Placeholder="Title" />
+                <Editor Text="{Binding CurrentMindMapEntity.Description, Mode=TwoWay}"  Placeholder="Description" />
+            </StackLayout>
+        </RelativeLayout>
+    </ContentPage.Content>
+</ContentPage>

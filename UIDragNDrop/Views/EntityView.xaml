@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ContentView 
+    xmlns="http://xamarin.com/schemas/2014/forms" 
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+    xmlns:local="clr-namespace:UIDragNDrop.Views"
+    x:Class="UIDragNDrop.Views.EntityView">
+    <Frame BorderColor="Black"
+           Padding="0" Margin="7" WidthRequest="220"
+           IsClippedToBounds="true" CornerRadius="5" HorizontalOptions="Start" VerticalOptions="Start">
+        <StackLayout HorizontalOptions="Start">
+            <Label Text="{Binding Name}" HorizontalOptions="Center" />
+            <BoxView Color="Black" HorizontalOptions="Fill" HeightRequest="1" />
+            <ListView ItemsSource="{Binding Properties}" VerticalOptions="Start" RowHeight="30">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <Label Text="{Binding SimpleString}" VerticalOptions="Center" FontSize="Small" Margin="3" />
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+            <BoxView Color="Black" HorizontalOptions="Fill" HeightRequest="1" />
+            <ListView ItemsSource="{Binding Methods}" VerticalOptions="Start" RowHeight="30">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <Label Text="{Binding SimpleString}" VerticalOptions="Center" FontSize="Small" Margin="3" />
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </StackLayout>
+    </Frame>
+</ContentView>
