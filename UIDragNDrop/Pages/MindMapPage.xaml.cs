@@ -32,8 +32,10 @@ namespace UIDragNDrop.Pages
                     this.ViewModel.CurrentMindMapEntity = (sender1 as MindMapView).MapEntity;
                 };
                 mindMapView.GestureRecognizers.Add(tapGesture);
-                this.dndLayout.Children.Add(mindMapDrag,
-                    tappedLocation);
+                this.dndLayout.Children.Add(
+                    mindMapDrag,
+                    tappedLocation
+                );
             };
         }
 

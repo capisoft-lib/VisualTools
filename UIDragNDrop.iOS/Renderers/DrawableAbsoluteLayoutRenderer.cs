@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using CoreGraphics;
 using Foundation;
@@ -19,9 +20,12 @@ namespace UIDragNDrop.iOS.Renderers
         UIPanGestureRecognizer panGesture;
         UITapGestureRecognizer tapGesture;
         CGPoint lastLocation;
+        CGPoint lastMoveLocation;
         CGPoint originalPosition;
         UIGestureRecognizer.Token panGestureToken;
         UIGestureRecognizer.Token tapGestureToken;
+        private List<BoxView> displayedPlots = new List<BoxView>();
+
         void DetectPan()
         {
             var dragView = Element as DrawableAbsoluteLayout;
@@ -38,8 +42,9 @@ namespace UIDragNDrop.iOS.Renderers
                 }
 
                 CGPoint translation = panGesture.TranslationInView(Superview);
-                var currentCenterX = Center.X;
-                var currentCenterY = Center.Y;
+                CGPoint position = panGesture.LocationInView(this);
+                nfloat currentCenterX = 0; //Center.X;
+                nfloat currentCenterY = 0; //Center.Y;
                 //if (dragView.DragDirection == DragDirectionType.All || dragView.DragDirection == DragDirectionType.Horizontal)
                 {
                     currentCenterX = lastLocation.X + translation.X;
@@ -50,13 +55,57 @@ namespace UIDragNDrop.iOS.Renderers
                     currentCenterY = lastLocation.Y + translation.Y;
                 }
 
-                Center = new CGPoint(currentCenterX, currentCenterY);
-
                 if (panGesture.State == UIGestureRecognizerState.Ended)
                 {
                     dragView.DragEnded();
                     longPress = false;
+                    foreach (var bvi in displayedPlots)
+                    {
+                        dragView.Children.Remove(bvi);
+                    }
+                    displayedPlots = new List<BoxView>();
                 }
+
+                //Center = new CGPoint(currentCenterX, currentCenterY);
+                BoxView bv = new BoxView { Color = Color.DarkRed, HeightRequest = 4, WidthRequest = 4 };
+                displayedPlots.Add(bv);
+                //Device.BeginInvokeOnMainThread(() =>
+                //{
+                dragView.Children.Add(bv, new Point(position.X, position.Y));
+                if (Math.Abs(lastMoveLocation.X - position.X) > 3 || Math.Abs(lastMoveLocation.Y - position.Y) > 3)
+                {
+                    double minX = Math.Min(lastMoveLocation.X, position.X);
+                    double maxX = Math.Max(lastMoveLocation.X, position.X);
+                    double minY = Math.Min(lastMoveLocation.Y, position.Y);
+                    double maxY = Math.Max(lastMoveLocation.Y, position.Y);
+                    Console.WriteLine($" {minX}->{maxX} : {minY}->{maxY}");
+                    for (double i = minX; i < maxX; i += 3)
+                    {
+                        for (double j = minY; j < maxY; j += 3)
+                        {
+                            BoxView bvi = new BoxView { Color = Color.DarkRed, HeightRequest = 4, WidthRequest = 4 };
+                            displayedPlots.Add(bvi);
+                            dragView.Children.Add(bvi, new Point(i, j));
+                        }
+                    }
+                }
+                lastMoveLocation = position;
+                Console.WriteLine($"Add plot to : {position.X},{position.Y}");
+                //});
+            }
+        }
+
+        public void AddMidPlot(CGPoint p1, CGPoint p2)
+        {
+            double dist = Math.Sqrt(Math.Pow(p1.X - p2.X, 2) + Math.Pow(p1.Y - p2.Y, 2));
+            if (dist > 3)
+            {
+                double minX = Math.Min(p1.X, p2.X);
+                double maxX = Math.Max(p1.X, p2.X);
+                double minY = Math.Min(p1.Y, p2.Y);
+                double maxY = Math.Max(p1.Y, p2.Y);
+                double midX = Math.Abs(maxX - minX);
+                double midY = Math.Abs(maxY - minY);
             }
         }
 
@@ -111,6 +160,7 @@ namespace UIDragNDrop.iOS.Renderers
             lastTimeStamp = evt.Timestamp;
             Superview.BringSubviewToFront(this);
             lastLocation = Center;
+            lastMoveLocation = (touches.AnyObject as UITouch).LocationInView(this);
         }
         public override void TouchesMoved(NSSet touches, UIEvent evt)
         {
